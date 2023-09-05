@@ -42,7 +42,7 @@ sweep_configuration = {
         "num_heads": {'values':[4, 8, 16, 32]},
         "num_layers": {'values':[2, 4, 6, 8]},
         "pool": {'values':["max", "mean"]},
-        "num_epochs": {'value':20},
+        "num_epochs": {'value':10},
         "pos_enc": {'value':"fixed"},#, "learnable"]},
         "dropout": {'value':0.0},
         "fc_dim": {'value':None},
@@ -175,4 +175,4 @@ if __name__ == "__main__":
     print(f"Model will run on {device}")
     set_seed(seed=1)
     # main()
-    wandb.agent(sweep_id, main, count=2)
+    wandb.agent(sweep_id, main, count=10)
