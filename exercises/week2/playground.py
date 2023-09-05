@@ -41,7 +41,7 @@ def image_to_patches(image, patch_size, image_grid=True):
         ## Turn images into patches
         patches = rearrange(image, 'b c (nph ph) (npw pw) -> b (nph npw) (ph pw c)', ph=patch_h, pw=patch_w)
         ## Flatten patches
-        patches = patches.flatten(start_dim=2)
+        # patches = patches.flatten(start_dim=2)
         ################################
         assert patches.size()== (batch_size, num_patches , (patch_h * patch_w * C))
     return patches

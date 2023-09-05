@@ -11,6 +11,35 @@ import torchvision
 import torchvision.transforms as transforms
 from vit import ViT
 
+import wandb
+sweep_configuration = {
+    'method': 'random',
+    'name': 'sweep',
+    'metric': {
+        'goal': 'maximize', 
+        'name': 'validation_accuracy'
+        },
+    'parameters': {
+        "embed_dim": {'values':[128, 256, 512]},
+        "num_heads": {'values':[4, 8, 16, 32]},
+        "num_layers": {'values':[2, 4, 6, 8]},
+        "pool": {'values':["max", "mean", "cls"]},
+        "pos_enc": {'values':["fixed", "learnable"]},
+        "num_classes": {'value':2},
+        "channels": {'value':3},
+        "num_epochs": {'value':10},
+        "dropout": {'value':0.3},
+        "fc_dim": {'value':None},
+        "batch_size": {'value':16},
+        "lr": {'value':1e-4},
+        "warmup_steps": {'value':625},
+        "weight_decay": {'value':1e-3},
+        "gradient_clipping": {'value':1},
+        }
+}
+sweep_id = wandb.sweep(sweep=sweep_configuration, project="ADLinCV_Week2-vision-transformers")
+
+
 def set_seed(seed=1):
     random.seed(seed)
     np.random.seed(seed)
@@ -60,13 +89,29 @@ def prepare_dataloaders(batch_size, classes=[3, 7]):
     return trainloader, testloader, trainset, testset
 
 
-def main(image_size=(32,32), patch_size=(4,4), channels=3, 
-         embed_dim=128, num_heads=4, num_layers=4, num_classes=2,
-         pos_enc='learnable', pool='cls', dropout=0.3, fc_dim=None, 
-         num_epochs=20, batch_size=16, lr=1e-4, warmup_steps=625,
-         weight_decay=1e-3, gradient_clipping=1
-         
-    ):
+def main(config=None):
+    set_seed(seed=1)
+
+    wandb.init(config=sweep_configuration, project="ADLinCV_Week2-vision-transformers")
+    config = wandb.config
+
+    image_size=(32,32)
+    patch_size=(4,4)
+    channels=config.channels
+    embed_dim=config.embed_dim
+    num_heads=config.num_heads
+    num_layers=config.num_layers
+    num_classes=config.num_classes
+    pos_enc=config.pos_enc
+    pool=config.pool
+    dropout=config.dropout
+    fc_dim=config.fc_dim
+    num_epochs=config.num_epochs
+    batch_size=config.batch_size
+    lr=config.lr
+    warmup_steps=config.warmup_steps
+    weight_decay=config.weight_decay
+    gradient_clipping=config.gradient_clipping
 
     loss_function = nn.CrossEntropyLoss()
 
@@ -112,11 +157,12 @@ def main(image_size=(32,32), patch_size=(4,4), channels=3,
                 cor += float((label == out).sum().item())
             acc = cor / tot
             print(f'-- {"validation"} accuracy {acc:.3}')
+        wandb.log({"validation_accuracy": acc})
 
 
 if __name__ == "__main__":
     #os.environ["CUDA_VISIBLE_DEVICES"]= str(0)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  
     print(f"Model will run on {device}")
-    set_seed(seed=1)
-    main()
+    # main()
+    wandb.agent(sweep_id, main, count=10)
