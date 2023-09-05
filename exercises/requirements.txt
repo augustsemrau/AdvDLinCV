@@ -1,0 +1,11 @@
+torch
+einops
+numpy
+torchtext==0.6.0
+tqdm
+matplotlib
+seaborn
+six
+pandas
+plotly-express
+torchvision
