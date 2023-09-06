@@ -20,11 +20,16 @@ sweep_configuration = {
         'name': 'validation_accuracy'
         },
     'parameters': {
-        "embed_dim": {'values':[128, 256, 512]},
-        "num_heads": {'values':[4, 8, 16, 32]},
-        "num_layers": {'values':[2, 4, 6, 8]},
-        "pool": {'values':["max", "mean", "cls"]},
-        "pos_enc": {'values':["fixed", "learnable"]},
+        "embed_dim": {'value':512},
+        "num_heads": {'value':16},
+        "num_layers": {'value':2},
+        "pool": {'value':"mean"},
+        "pos_enc": {'value':"fixed"},
+        # "embed_dim": {'values':[128, 256, 512]},
+        # "num_heads": {'values':[4, 8, 16, 32]},
+        # "num_layers": {'values':[2, 4, 6, 8]},
+        # "pool": {'values':["max", "mean", "cls"]},
+        # "pos_enc": {'values':["fixed", "learnable"]},
         "num_classes": {'value':2},
         "channels": {'value':3},
         "num_epochs": {'value':10},
@@ -159,10 +164,29 @@ def main(config=None):
             print(f'-- {"validation"} accuracy {acc:.3}')
         wandb.log({"validation_accuracy": acc})
 
+    ## Save attention maps for a few images
+    model.eval()
+    for image, label in test_iter:
+        if torch.cuda.is_available():
+            image, label = image.to('cuda'), label.to('cuda')
+        out, attention_maps = model(image, return_attention_maps=True)
+        break
+    fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+    fig.suptitle('Attention Maps')
+    for i, ax in enumerate(axes.flat):
+        ax.imshow(attention_maps[0][i].cpu().detach().numpy())
+        ax.axis('off')
+        ax.set_title(f'head {i//4+1}')
+    plt.subplots_adjust(wspace=0.1, hspace=0.1)
+    
+    # Save these attention maps for a few images
+    wandb.log({"attention_maps": [wandb.Image(attention_maps[0][i].cpu().detach().numpy()) for i in range(8)]})
+
+    
 
 if __name__ == "__main__":
     #os.environ["CUDA_VISIBLE_DEVICES"]= str(0)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  
     print(f"Model will run on {device}")
     # main()
-    wandb.agent(sweep_id, main, count=10)
+    wandb.agent(sweep_id, main, count=1)
