@@ -122,9 +122,16 @@ def main(config=None):
 
     train_iter, test_iter, _, _ = prepare_dataloaders(batch_size=batch_size)
 
-    model = ViT(image_size=image_size, patch_size=patch_size, channels=channels, 
-                embed_dim=embed_dim, num_heads=num_heads, num_layers=num_layers,
-                pos_enc=pos_enc, pool=pool, dropout=dropout, fc_dim=fc_dim, 
+    model = ViT(image_size=image_size, 
+                patch_size=patch_size, 
+                channels=channels, 
+                embed_dim=embed_dim, 
+                num_heads=num_heads, 
+                num_layers=num_layers,
+                pos_enc=pos_enc, 
+                pool=pool, 
+                dropout=dropout, 
+                fc_dim=fc_dim, 
                 num_classes=num_classes
     )
 
@@ -164,23 +171,28 @@ def main(config=None):
             print(f'-- {"validation"} accuracy {acc:.3}')
         wandb.log({"validation_accuracy": acc})
 
-    ## Save attention maps for a few images
-    model.eval()
-    for image, label in test_iter:
-        if torch.cuda.is_available():
-            image, label = image.to('cuda'), label.to('cuda')
-        out, attention_maps = model(image, return_attention_maps=True)
-        break
-    fig, axes = plt.subplots(2, 4, figsize=(16, 8))
-    fig.suptitle('Attention Maps')
-    for i, ax in enumerate(axes.flat):
-        ax.imshow(attention_maps[0][i].cpu().detach().numpy())
-        ax.axis('off')
-        ax.set_title(f'head {i//4+1}')
-    plt.subplots_adjust(wspace=0.1, hspace=0.1)
+    # ## Save attention maps for a few images
+    # model.eval()
+    # for image, label in test_iter:
+    #     if torch.cuda.is_available():
+    #         image, label = image.to('cuda'), label.to('cuda')
+    #     out = model(image)
+    #     break
     
-    # Save these attention maps for a few images
-    wandb.log({"attention_maps": [wandb.Image(attention_maps[0][i].cpu().detach().numpy()) for i in range(8)]})
+    # # Get attention maps when the model has no attention pooling
+
+    
+    # fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+    # fig.suptitle('Attention Maps')
+    # for i, ax in enumerate(axes.flat):
+    #     ax.imshow(attention_maps[0][i].cpu().detach().numpy())
+    #     ax.axis('off')
+    #     ax.set_title(f'head {i//4+1}')
+    # plt.subplots_adjust(wspace=0.1, hspace=0.1)
+    
+    # # Save these attention maps for a few images
+    # plt.savefig("attention_maps.png")
+    # # wandb.log({"attention_maps": [wandb.Image(attention_maps[0][i].cpu().detach().numpy()) for i in range(8)]})
 
     
 
