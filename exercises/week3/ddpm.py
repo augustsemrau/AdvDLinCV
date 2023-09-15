@@ -74,7 +74,7 @@ class Diffusion:
         # HINT: use model to predict noise
         predicted_noise = model(x_t, t)
         # HINT: calculate the mean of the distribution p(x_{t-1} | x_t). See Eq. 11 in the ddpm paper at page 4
-        mean = (x_t - alpha_bar * predicted_noise) / alpha
+        mean = (1 / torch.sqrt(alpha)) * (x_t - (beta / torch.sqrt(1 - alpha_bar)) * predicted_noise)
         std = torch.sqrt(beta)
 
         return mean, std
