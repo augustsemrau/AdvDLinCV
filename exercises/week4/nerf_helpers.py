@@ -67,7 +67,7 @@ def sample_stratified(
 
     # Apply scale from `rays_d` and offset from `rays_o` to samples
     # pts: (width, height, n_samples, 3)
-    pts = rays_o[n_samples, None, :] + rays_d[n_samples, None, :] * distances[n_samples, :, None]
+    pts = rays_o[..., None, :] + rays_d[..., None, :] * distances[..., :, None]
     return pts, distances
 
 
