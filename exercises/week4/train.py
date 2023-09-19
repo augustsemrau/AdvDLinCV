@@ -108,10 +108,14 @@ def main(scene_name):
 
         rgb_predicted = outputs['rgb_map']
         # TASK 5: training loop
-        loss = ... #HINT: MSE betweein rgb_predicted and target_img 
-        ... #HINT: zero gradient
-        ... #HINT: loss backward
-        ... #HINT optimizer step
+        #HINT: MSE betweein rgb_predicted and target_img 
+        loss = torch.nn.MSELoss()(rgb_predicted, target_img) # torch.mean((rgb_predicted - target_img)**2) 
+        #HINT: zero gradient
+        optimizer.zero_grad()
+        #HINT: loss backward
+        loss.backward()
+        #HINT optimizer step
+        optimizer.step()
 
         psnr = -10. * torch.log10(loss)
         pbar.set_postfix(MSE=loss.item(), PSNR=psnr.item())

@@ -277,7 +277,7 @@ def prepare_viewdirs_chunks(points, rays_d, encoding_function, chunksize=2**15, 
     # Prepare the viewdirs
     if constant_viewdir is not None:
         # TASK 4: Render with a constant viewdir. HINT: Use torch.ones_line(...) and constant_viewdir
-        viewdirs = torch.ones_like(points) * constant_viewdir
+        viewdirs = torch.ones_like(rays_d) * constant_viewdir
     else :
         viewdirs = rays_d / torch.norm(rays_d, dim=-1, keepdim=True)
     viewdirs = viewdirs[:, None, ...].expand(points.shape).reshape((-1, 3))

@@ -47,12 +47,12 @@ class NeRF(nn.Module):
             h = l(h) # HINT: feed h to the layer i and rewrite to h
             h = F.relu(h) # HINT: use relu
             if i in self.skips:
-                h = torch.cat([h, input_pts], dim=-1) # implement skip with torch.cat
+                h = torch.cat([input_pts, h], dim=-1) # implement skip with torch.cat
 
         if self.d_viewdirs is not None:
             alpha = self.alpha_linear(h) # HINT: feed h to alpha linear
             feature = self.feature_linear(h) # HINT: feed h to feature linear
-            h = torch.cat([h, input_pts], dim=-1) # HINT: concat feature and input_views to create the input for the views_linreas
+            h = torch.cat([feature, input_views], dim=-1) # HINT: concat feature and input_views to create the input for the views_linreas
         
             for i, l in enumerate(self.views_linears):
                 h = l(h) # HINT: forward for views_linears of i
@@ -87,8 +87,8 @@ class Embedder(nn.Module):
 
         # TASK 2: Complete the implementation of the Embedder
         for freq in freq_bands:
-            self.embed_fns.append(lambda x, freq=freq: torch.sin(2**freq * x)) # HINT: use torch.sin
-            self.embed_fns.append(lambda x, freq=freq: torch.cos(2**freq * x)) # HINT: use torch.cos
+            self.embed_fns.append(lambda x, freq=freq: torch.sin(freq * x)) # HINT: use torch.sin
+            self.embed_fns.append(lambda x, freq=freq: torch.cos(freq * x)) # HINT: use torch.cos
 
     def forward(self, x):
         """
