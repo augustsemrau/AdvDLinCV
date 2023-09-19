@@ -52,7 +52,8 @@ def sample_stratified(
     """
 
     # TASK 1: Sample n_samples linearly between `near` and `far` 
-    distances = ... # HINT: USE torch.linspace, get device with rays_o.device 
+    # HINT: USE torch.linspace, get device with rays_o.device 
+    distances = torch.linspace(near, far, n_samples, device=rays_o.device)
     
     if perturb:
         mids = calculate_mids(distances)
@@ -66,7 +67,7 @@ def sample_stratified(
 
     # Apply scale from `rays_d` and offset from `rays_o` to samples
     # pts: (width, height, n_samples, 3)
-    pts = rays_o[..., None, :] + rays_d[..., None, :] * distances[..., :, None]
+    pts = rays_o[n_samples, None, :] + rays_d[n_samples, None, :] * distances[n_samples, :, None]
     return pts, distances
 
 
@@ -275,7 +276,8 @@ def prepare_viewdirs_chunks(points, rays_d, encoding_function, chunksize=2**15, 
     """
     # Prepare the viewdirs
     if constant_viewdir is not None:
-        viewdirs = None # TASK 4: Render with a constant viewdir. HINT: Use torch.ones_line(...) and constant_viewdir
+        # TASK 4: Render with a constant viewdir. HINT: Use torch.ones_line(...) and constant_viewdir
+        viewdirs = torch.ones_like(points) * constant_viewdir
     else :
         viewdirs = rays_d / torch.norm(rays_d, dim=-1, keepdim=True)
     viewdirs = viewdirs[:, None, ...].expand(points.shape).reshape((-1, 3))

@@ -173,7 +173,7 @@ embedder = Embedder(d_input, n_freqs, log_space)
 
 points = pts.reshape((-1, 3))
 idxs =  torch.linspace(0, pts.shape[0], steps=8, dtype=torch.int)
-points = points[idxs]
+points = points[idxs.long()]
 embeddings = embedder(points).cpu().detach().numpy()
 
 # Visualize the embeddings as a heatmap
