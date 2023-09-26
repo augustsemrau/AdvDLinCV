@@ -166,3 +166,4 @@ cython_debug/
 *models/
 *results/
 *assets/
+*weights/
