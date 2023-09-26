@@ -139,7 +139,7 @@ def main(scene_name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--scene-name', type=str, default='chair')
+    parser.add_argument('--scene-name', type=str, default='ship')
     args = parser.parse_args()
     main(args.scene_name)
     

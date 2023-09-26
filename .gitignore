@@ -166,4 +166,11 @@ cython_debug/
 *models/
 *results/
 *assets/
+
+
+## Week4
+*chair/
+*ship/
+
+## Week5
 *weights/
