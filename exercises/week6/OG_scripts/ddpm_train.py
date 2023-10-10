@@ -81,15 +81,15 @@ def train(T=500, cfg=True, img_size=16, input_channels=3, channels=32,
                 labels = None
 
             # Train a diffusion model with classifier-free guidance
-            # with probability 0.9, use the true label
+            # Do not forget randomly discard labels
             p_uncod = 0.1
-            labels = torch.where(torch.rand(1).to(device) > p_uncod, labels, 0).to(device)
 
-            #sample t from uniform distribution from 1 to T
-            t = diffusion.sample_timesteps(images.shape[0], T).to(device)
-            x_t, noise = diffusion.q_sample(images, t)
-            predicted_noise = model(x_t, t, labels) # predict noise of x_t using the UNet
-            loss = mse(noise,predicted_noise) # loss between noise and predicted noise
+            ...
+
+            t = ...
+            x_t, noise = ...
+            predicted_noise = ...
+            loss = ...
 
             optimizer.zero_grad()
             loss.backward()

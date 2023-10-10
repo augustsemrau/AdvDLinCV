@@ -51,9 +51,9 @@ def feature_statistics(features):
 def frechet_distance(mu1, sigma1, mu2, sigma2):
     # https://en.wikipedia.org/wiki/Fr%C3%A9chet_distance
     # HINT: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.sqrtm.html
+    # Implement FID score
 
-    # Implement FID score for multivariate Gaussians in a single line using torch
-    fid = np.linalg.norm(mu1 - mu2)**2 + np.trace(sigma1 + sigma2 - 2*linalg.sqrtm(sigma1@sigma2))
+    fid = ...
 
     return fid
 

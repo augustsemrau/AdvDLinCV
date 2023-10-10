@@ -10,7 +10,7 @@ import numpy as np
 from dataset import SpritesDataset
 
 
-SEED = 2004
+SEED = 1
 CLASS_LABELS = ['human', 'non-human', 'food', 'spell', 'side-facing']
 train_size = 40000
 val_size = 10000

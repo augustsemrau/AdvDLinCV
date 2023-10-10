@@ -140,17 +140,8 @@ class UNet(nn.Module):
         if num_classes is not None:
             # Project one-hot encoded labels to the time embedding dimension 
             # Implement it as a 2-layer MLP with a GELU activation in-between
-            self.label_emb = nn.Sequential(
-                nn.Linear(
-                    num_classes,
-                    time_dim
-                ),
-                nn.GELU(),
-                nn.Linear(
-                    time_dim,
-                    time_dim
-                )
-            )
+            # self.label_emb = ...
+            pass
             
 
     def forward(self, x, t, y=None):
@@ -160,8 +151,7 @@ class UNet(nn.Module):
 
         if y is not None:
             # Add label and time embeddings together
-            t = t + self.label_emb(y)
-            
+            pass
             
         x1 = self.inc(x)
         x2 = self.down1(x1, t)
@@ -173,9 +163,6 @@ class UNet(nn.Module):
         x4 = self.bot1(x4)
         x4 = self.bot2(x4)
         x4 = self.bot3(x4)
-
-        self.decoded_x = x4
-
         x = self.up1(x4, x3, t)
         x = self.sa4(x)
         x = self.up2(x, x2, t)
@@ -189,20 +176,7 @@ class UNet(nn.Module):
 class Classifier(nn.Module):
     def __init__(self, img_size=16, c_in=3, labels=5, time_dim=256, device="cuda", channels=32):
         super().__init__()
-        self.model = UNet(img_size, c_in, labels, time_dim, device, channels, labels)
-
-        # layers for classification on flattened UNet decoded output
-        self.fc1 = nn.Linear(512, 128)
-        self.fc2 = nn.Linear(128, labels)
-
+        pass
 
     def forward(self, x, t):
-        #encode input
-        self.model(x, t)
-        x = self.model.decoded_x
-        #flatten x
-        x = x.reshape(x.shape[0], -1)
-        #softmax over classes
-        x = self.fc1(x)
-        x = self.fc2(x)
-        return x
+        return
